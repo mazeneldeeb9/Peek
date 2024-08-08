@@ -11,17 +11,16 @@ class ViewController: UIViewController {
     let networkManager: NetworkManager = NetworkManager()
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Create a Task to run the async method
         Task {
             do {
-               let moviesResponse = try await networkManager.getPopularMovies()
+                let movie = try await networkManager.getMovieDetails(of: 533535)
+                print(movie.overview)
             } catch {
                 print("Failed to get popular movies: \(error)")
             }
         }
     }
     
-
+    
 }
 
