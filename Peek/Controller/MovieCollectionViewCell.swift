@@ -8,10 +8,16 @@
 import UIKit
 
 class MovieCollectionViewCell: UICollectionViewCell {
-
+    @IBOutlet weak var movieImage: UIImageView!
+    @IBOutlet weak var movieTitle: UILabel!
+    var movie: Movie?
+    
+    @IBOutlet weak var bottomView: UIView!
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        self.layer.cornerRadius = 24
+        bottomView?.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
+        bottomView?.layer.cornerRadius = 24
     }
 
 }
