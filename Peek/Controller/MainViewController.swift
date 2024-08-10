@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class MainViewController: UIViewController {
     @IBOutlet weak var nowPlayingCollectionView: UICollectionView!
     @IBOutlet weak var popularCollectionView: UICollectionView!
     @IBOutlet weak var topRatedCollectionView: UICollectionView!
@@ -17,7 +17,10 @@ class ViewController: UIViewController {
         nowPlayingCollectionView.dataSource = self
         popularCollectionView.dataSource = self
         topRatedCollectionView.dataSource = self
-            
+        nowPlayingCollectionView.delegate = self
+        popularCollectionView.delegate = self
+        topRatedCollectionView.delegate = self
+        
         nowPlayingCollectionView?.register(UINib(nibName: "MovieCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "MovieCell")
         popularCollectionView?.register(UINib(nibName: "MovieCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "MovieCell")
         topRatedCollectionView?.register(UINib(nibName: "MovieCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "MovieCell")
@@ -26,18 +29,18 @@ class ViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
+        
         let screenSize = UIScreen.main.bounds.size
-
+        
         // Ensure the superview exists
         if let parentHeight = self.nowPlayingCollectionView.superview?.bounds.height {
             let layout = UICollectionViewFlowLayout()
             layout.scrollDirection = .horizontal
-
+            
             layout.itemSize = CGSize(width: (screenSize.width / 2.3) + 10, height: parentHeight - 55)
             layout.minimumLineSpacing = 10
             layout.minimumInteritemSpacing = 0
-           layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+            layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
             // Apply the layout to the collection view
             nowPlayingCollectionView.collectionViewLayout = layout
             popularCollectionView.collectionViewLayout = layout
@@ -47,11 +50,18 @@ class ViewController: UIViewController {
     
 }
 
-extension ViewController: UICollectionViewDataSource{
+
+
+extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 3
     }
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let movieDetailsView = storyboard.instantiateViewController(withIdentifier: "MovieDetailsView")
+        navigationController?.pushViewController(movieDetailsView, animated: true)
+        print(indexPath.row)
+    }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MovieCell", for: indexPath) as! MovieCollectionViewCell
         
