@@ -12,10 +12,13 @@ struct NetworkManager {
     private let token: String = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0ODhjZmIxYzUzMjMzYTczYWY0ZjI0Y2JhMmFiNGU3MiIsIm5iZiI6MTcyMzA0NzA3Ni44ODY1ODIsInN1YiI6IjY2YjM2NTdmOTNlZTc4MTk4YTdiOTA1NiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.evCPiBsuvwVuRO53d6fAVq0Powd5JVSevI7SkMQrzso"
     
     
-    func getPopularMovies() async throws -> MovieResponse {
-        guard let url = URL(string: "https://api.themoviedb.org/3/movie/popular") else {
+    
+    
+    func getMovies(for category: MovieCategory) async throws -> MovieResponse {
+        guard let url = URL(string: "https://api.themoviedb.org/3/movie/\(category.rawValue)") else {
             throw NetworkError.badUrl
         }
+        
         
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
         let queryItems: [URLQueryItem] = [
@@ -39,12 +42,13 @@ struct NetworkManager {
                   (200...299).contains(httpResponse.statusCode) else {
                 throw NetworkError.requestFailed(statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1)
             }
-            
+            //print(String(decoding: data, as: UTF8.self))
             let decoder = JSONDecoder()
             do {
                 let moviesResponse = try decoder.decode(MovieResponse.self, from: data)
                 return moviesResponse
             } catch {
+                print(error)
                 throw NetworkError.decodingFailed
             }
             
@@ -54,8 +58,6 @@ struct NetworkManager {
         }
     }
     
-    
-    
     func getMovieDetails(of movieId: Int) async throws -> Movie {
         guard let url = URL(string: "https://api.themoviedb.org/3/movie/\(movieId)") else {
             throw NetworkError.badUrl
@@ -63,7 +65,7 @@ struct NetworkManager {
         
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
         let queryItems: [URLQueryItem] = [
-          URLQueryItem(name: "language", value: "en-US"),
+            URLQueryItem(name: "language", value: "en-US"),
         ]
         components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
         
@@ -88,6 +90,7 @@ struct NetworkManager {
                 let movie: Movie = try decoder.decode(Movie.self, from: data)
                 return movie
             } catch {
+                print(error)
                 throw NetworkError.decodingFailed
             }
             
@@ -99,7 +102,7 @@ struct NetworkManager {
     
     
     
-
+    
     
     
     
@@ -112,4 +115,9 @@ enum NetworkError: Error {
     case decodingFailed
     
     
+}
+enum MovieCategory: String {
+    case popular = "popular"
+    case nowPlaying = "now_playing"
+    case topRated = "top_rated"
 }

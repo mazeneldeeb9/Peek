@@ -19,6 +19,7 @@
 		E857E5052C6641A30080AC90 /* MovieCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E857E5032C6641A30080AC90 /* MovieCollectionViewCell.swift */; };
 		E857E5062C6641A30080AC90 /* MovieCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E857E5042C6641A30080AC90 /* MovieCollectionViewCell.xib */; };
 		E857E5082C667C6F0080AC90 /* MovieDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E857E5072C667C6F0080AC90 /* MovieDetailsViewController.swift */; };
+		E8AFB3C92C67980B00D0840B /* UIImageViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8AFB3C82C67980B00D0840B /* UIImageViewExtension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		E857E5032C6641A30080AC90 /* MovieCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCollectionViewCell.swift; sourceTree = "<group>"; };
 		E857E5042C6641A30080AC90 /* MovieCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MovieCollectionViewCell.xib; sourceTree = "<group>"; };
 		E857E5072C667C6F0080AC90 /* MovieDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailsViewController.swift; sourceTree = "<group>"; };
+		E8AFB3C82C67980B00D0840B /* UIImageViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageViewExtension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +70,7 @@
 		E857E4D22C64C9D60080AC90 /* Peek */ = {
 			isa = PBXGroup;
 			children = (
+				E8AFB3C72C6797E600D0840B /* Extensions */,
 				E857E4E92C64CD110080AC90 /* View */,
 				E857E4E82C64CD0C0080AC90 /* Model */,
 				E857E4E72C64CCF70080AC90 /* Controller */,
@@ -107,6 +110,14 @@
 				E857E5042C6641A30080AC90 /* MovieCollectionViewCell.xib */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		E8AFB3C72C6797E600D0840B /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				E8AFB3C82C67980B00D0840B /* UIImageViewExtension.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -186,6 +197,7 @@
 				E857E4D82C64C9D60080AC90 /* MainViewController.swift in Sources */,
 				E857E4D42C64C9D60080AC90 /* AppDelegate.swift in Sources */,
 				E857E4ED2C64F6DF0080AC90 /* MoviesResponse.swift in Sources */,
+				E8AFB3C92C67980B00D0840B /* UIImageViewExtension.swift in Sources */,
 				E857E5052C6641A30080AC90 /* MovieCollectionViewCell.swift in Sources */,
 				E857E4EB2C64D0740080AC90 /* Movie.swift in Sources */,
 				E857E4D62C64C9D60080AC90 /* SceneDelegate.swift in Sources */,
