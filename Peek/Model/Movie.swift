@@ -68,13 +68,6 @@ struct Movie: Decodable {
 
 
 
-
-struct MovieDetails {
-    let runtime: Int
-    let genres: [Genre]
-    let productionCompanies: [ProductionCompany]
-}
-
 // MARK: - Genre Model
 struct Genre: Decodable {
     let id: Int
