@@ -10,7 +10,7 @@ class MainViewController: UIViewController {
     @IBOutlet weak var popularCollectionView: UICollectionView!
     @IBOutlet weak var topRatedCollectionView: UICollectionView!
     let scrollView = UIScrollView()
-
+    
     let networkManager: NetworkManager = NetworkManager()
     var popularMovies: MovieResponse?
     var topRatedMovies: MovieResponse?
@@ -53,7 +53,6 @@ extension MainViewController {
         view.addSubview(scrollView)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
-        // Set scrollView constraints
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: topView.bottomAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -61,25 +60,21 @@ extension MainViewController {
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
         
-        // Add collectionsStack to scrollView
         scrollView.addSubview(collectionsStack)
         collectionsStack.translatesAutoresizingMaskIntoConstraints = false
         
-        // Set collectionsStack constraints
         NSLayoutConstraint.activate([
             collectionsStack.topAnchor.constraint(equalTo: scrollView.topAnchor),
             collectionsStack.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             collectionsStack.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             collectionsStack.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            collectionsStack.widthAnchor.constraint(equalTo: scrollView.widthAnchor) // Make sure the stack view's width matches the scroll view's width
+            collectionsStack.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
         ])
         
-        // Update the height constraint of collectionsStack
         let collectionsStackHeightConstraint = collectionsStack.heightAnchor.constraint(equalToConstant: 0)
         collectionsStackHeightConstraint.priority = .defaultLow
         collectionsStackHeightConstraint.isActive = true
         
-        // Add a height constraint based on the content
         collectionsStack.layoutIfNeeded()
         collectionsStackHeightConstraint.constant = collectionsStack.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
     }
@@ -155,20 +150,18 @@ extension MainViewController {
     }
     
     private func showLoadingView() {
-        view.isUserInteractionEnabled = false // Disable user interaction
+        view.isUserInteractionEnabled = false
         activityIndicator.startAnimating()
         
-        // Hide all views except activity indicator
         nowPlayingCollectionView.isHidden = true
         popularCollectionView.isHidden = true
         topRatedCollectionView.isHidden = true
     }
     
     private func hideLoadingView() {
-        view.isUserInteractionEnabled = true // Re-enable user interaction
+        view.isUserInteractionEnabled = true
         activityIndicator.stopAnimating()
         
-        // Show all views
         nowPlayingCollectionView.isHidden = false
         popularCollectionView.isHidden = false
         topRatedCollectionView.isHidden = false
@@ -216,9 +209,15 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let movie = currentCollectionView(current: collectionView)?.results[indexPath.item] {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let movieDetailsView = storyboard.instantiateViewController(withIdentifier: "MovieDetailsView") as! MovieDetailsViewController
-            movieDetailsView.movieId = movie.id
-            navigationController?.pushViewController(movieDetailsView, animated: true)
+            if let movieDetailsView = storyboard.instantiateViewController(withIdentifier: "MovieDetailsView") as? MovieDetailsViewController {
+                movieDetailsView.movieId = movie.id
+                navigationController?.pushViewController(movieDetailsView, animated: true)
+            }
         }
     }
+    
+    
 }
+
+
+

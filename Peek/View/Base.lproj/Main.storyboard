@@ -90,10 +90,10 @@
                                                 </collectionViewFlowLayout>
                                                 <cells>
                                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Movie Cell" id="iDg-JS-JIu">
-                                                        <rect key="frame" x="0.0" y="20.333333333333332" width="128" height="127.99999999999999"/>
+                                                        <rect key="frame" x="0.0" y="20.333333333333332" width="128" height="127.99999999999997"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="vym-XL-EuW">
-                                                            <rect key="frame" x="0.0" y="0.0" width="128" height="127.99999999999999"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="128" height="127.99999999999997"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                         </collectionViewCellContentView>
                                                     </collectionViewCell>
@@ -257,10 +257,10 @@
                             </collectionViewFlowLayout>
                             <cells>
                                 <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Movie Cell" id="doU-gc-pvF">
-                                    <rect key="frame" x="0.0" y="20.333333333333332" width="128" height="127.99999999999997"/>
+                                    <rect key="frame" x="0.0" y="20.333333333333332" width="128" height="127.99999999999999"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="lr3-wf-x4g">
-                                        <rect key="frame" x="0.0" y="0.0" width="128" height="127.99999999999997"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="128" height="127.99999999999999"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                     </collectionViewCellContentView>
                                 </collectionViewCell>
@@ -289,7 +289,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="prototype" translatesAutoresizingMaskIntoConstraints="NO" id="BQu-il-tQ1">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="BQu-il-tQ1">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="393"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="BQu-il-tQ1" secondAttribute="height" id="NZx-9z-MC7"/>
@@ -472,7 +472,6 @@
         <image name="clock.fill" catalog="system" width="128" height="123"/>
         <image name="hand.thumbsup.fill" catalog="system" width="128" height="121"/>
         <image name="person.crop.circle" catalog="system" width="128" height="123"/>
-        <image name="prototype" width="500" height="750"/>
         <namedColor name="Light Purple">
             <color red="0.24313725490196078" green="0.24705882352941178" blue="0.35294117647058826" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

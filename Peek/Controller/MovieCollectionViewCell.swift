@@ -25,8 +25,6 @@ class MovieCollectionViewCell: UICollectionViewCell {
         voteAverage.text = movie.getVoteAverage()
         if let posterPath = movie.posterPath, let url = URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)") {
             movieImage.load(url: url)
-        } else {
-            movieImage.image = UIImage(named: "prototype")
-        }
+        } 
     }
 }
