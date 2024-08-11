@@ -1,17 +1,16 @@
-//
-//  ViewController.swift
-//  Peek
-//
-//  Created by mazen eldeeb on 08/08/2024.
-//
-
 import UIKit
 
 class MainViewController: UIViewController {
+    
+    private let activityIndicator = UIActivityIndicatorView(style: .large)
+    
+    @IBOutlet weak var collectionsStack: UIStackView!
+    @IBOutlet weak var topView: UIView!
     @IBOutlet weak var nowPlayingCollectionView: UICollectionView!
     @IBOutlet weak var popularCollectionView: UICollectionView!
     @IBOutlet weak var topRatedCollectionView: UICollectionView!
-    
+    let scrollView = UIScrollView()
+
     let networkManager: NetworkManager = NetworkManager()
     var popularMovies: MovieResponse?
     var topRatedMovies: MovieResponse?
@@ -19,6 +18,24 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupScrollView()
+        setupLoadingView()
+        setupCollectionViews()
+        fetchMovies()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        updateCollectionViewLayouts()
+    }
+}
+
+// MARK: - Logic
+
+extension MainViewController {
+    private func setupCollectionViews() {
+        let cellName: String = "MovieCollectionViewCell"
+        let cellIdentifier = "MovieCell"
         
         nowPlayingCollectionView.dataSource = self
         popularCollectionView.dataSource = self
@@ -27,9 +44,47 @@ class MainViewController: UIViewController {
         popularCollectionView.delegate = self
         topRatedCollectionView.delegate = self
         
-        nowPlayingCollectionView.register(UINib(nibName: "MovieCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "MovieCell")
-        popularCollectionView.register(UINib(nibName: "MovieCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "MovieCell")
-        topRatedCollectionView.register(UINib(nibName: "MovieCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "MovieCell")
+        nowPlayingCollectionView.register(UINib(nibName: cellName, bundle: nil), forCellWithReuseIdentifier: cellIdentifier)
+        popularCollectionView.register(UINib(nibName: cellName, bundle: nil), forCellWithReuseIdentifier: cellIdentifier)
+        topRatedCollectionView.register(UINib(nibName: cellName, bundle: nil), forCellWithReuseIdentifier: cellIdentifier)
+    }
+    
+    private func setupScrollView() {
+        view.addSubview(scrollView)
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Set scrollView constraints
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: topView.bottomAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+        
+        // Add collectionsStack to scrollView
+        scrollView.addSubview(collectionsStack)
+        collectionsStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Set collectionsStack constraints
+        NSLayoutConstraint.activate([
+            collectionsStack.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            collectionsStack.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            collectionsStack.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            collectionsStack.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            collectionsStack.widthAnchor.constraint(equalTo: scrollView.widthAnchor) // Make sure the stack view's width matches the scroll view's width
+        ])
+        
+        // Update the height constraint of collectionsStack
+        let collectionsStackHeightConstraint = collectionsStack.heightAnchor.constraint(equalToConstant: 0)
+        collectionsStackHeightConstraint.priority = .defaultLow
+        collectionsStackHeightConstraint.isActive = true
+        
+        // Add a height constraint based on the content
+        collectionsStack.layoutIfNeeded()
+        collectionsStackHeightConstraint.constant = collectionsStack.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+    }
+    private func fetchMovies() {
+        showLoadingView()
         
         Task {
             do {
@@ -38,23 +93,36 @@ class MainViewController: UIViewController {
                 topRatedMovies = try await networkManager.getMovies(for: .topRated)
                 
                 DispatchQueue.main.async {
-                    self.nowPlayingCollectionView.reloadData()
-                    self.popularCollectionView.reloadData()
-                    self.topRatedCollectionView.reloadData()
+                    self.updateUI()
+                    self.hideLoadingView()
                 }
-                viewDidLayoutSubviews() // Ensure layout updates
             } catch {
-                print("Failed to fetch movies: \(error)")
+                DispatchQueue.main.async {
+                    self.handleFetchError(error)
+                    self.hideLoadingView()
+                }
             }
         }
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
+    private func updateUI() {
+        nowPlayingCollectionView.reloadData()
+        popularCollectionView.reloadData()
+        topRatedCollectionView.reloadData()
+    }
+    
+    private func currentCollectionView(current collectionView: UICollectionView) -> MovieResponse? {
+        if collectionView == popularCollectionView {
+            return popularMovies
+        } else if collectionView == nowPlayingCollectionView {
+            return nowPlayingMovies
+        }
+        return topRatedMovies
+    }
+    
+    private func updateCollectionViewLayouts() {
         let screenSize = UIScreen.main.bounds.size
         
-        // Ensure the superview exists
         if let parentHeight = nowPlayingCollectionView.superview?.bounds.height {
             let layout = UICollectionViewFlowLayout()
             layout.scrollDirection = .horizontal
@@ -70,49 +138,87 @@ class MainViewController: UIViewController {
     }
 }
 
+// MARK: - LoadingView
+
+extension MainViewController {
+    private func setupLoadingView() {
+        activityIndicator.color = .white
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(activityIndicator)
+        
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+        
+        activityIndicator.hidesWhenStopped = true
+    }
+    
+    private func showLoadingView() {
+        view.isUserInteractionEnabled = false // Disable user interaction
+        activityIndicator.startAnimating()
+        
+        // Hide all views except activity indicator
+        nowPlayingCollectionView.isHidden = true
+        popularCollectionView.isHidden = true
+        topRatedCollectionView.isHidden = true
+    }
+    
+    private func hideLoadingView() {
+        view.isUserInteractionEnabled = true // Re-enable user interaction
+        activityIndicator.stopAnimating()
+        
+        // Show all views
+        nowPlayingCollectionView.isHidden = false
+        popularCollectionView.isHidden = false
+        topRatedCollectionView.isHidden = false
+    }
+    
+    private func handleFetchError(_ error: Error) {
+        print("Failed to fetch movies: \(error.localizedDescription)")
+        
+        let alertController = UIAlertController(
+            title: "Error",
+            message: "Failed to load movies. Please try again later.",
+            preferredStyle: .alert
+        )
+        
+        let retryAction = UIAlertAction(title: "Retry", style: .default) { _ in
+            self.fetchMovies()  // Retry fetching movies
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        
+        alertController.addAction(retryAction)
+        alertController.addAction(cancelAction)
+        
+        present(alertController, animated: true)
+    }
+}
+
+// MARK: - UICollectionViewDataSource & UICollectionViewDelegate
+
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == popularCollectionView {
-            return popularMovies?.results.count ?? 0
-        } else if collectionView == nowPlayingCollectionView {
-            return nowPlayingMovies?.results.count ?? 0
-        } else if collectionView == topRatedCollectionView {
-            return topRatedMovies?.results.count ?? 0
-        }
-        return 0
+        return currentCollectionView(current: collectionView)?.results.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-          let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MovieCell", for: indexPath) as! MovieCollectionViewCell
-          
-          var movie: Movie?
-          if collectionView == popularCollectionView {
-              movie = popularMovies?.results[indexPath.item]
-          } else if collectionView == nowPlayingCollectionView {
-              movie = nowPlayingMovies?.results[indexPath.item]
-          } else if collectionView == topRatedCollectionView {
-              movie = topRatedMovies?.results[indexPath.item]
-          }
-          
-          if let movie = movie {
-              cell.configure(with: movie)
-          }
-          
-          return cell
-      }
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MovieCell", for: indexPath) as! MovieCollectionViewCell
+        
+        if let movie = currentCollectionView(current: collectionView)?.results[indexPath.row] {
+            cell.configure(with: movie)
+        }
+        
+        return cell
+    }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        var movie: Movie?
-        if collectionView == popularCollectionView {
-            movie = popularMovies?.results[indexPath.item]
-        } else if collectionView == nowPlayingCollectionView {
-            movie = nowPlayingMovies?.results[indexPath.item]
-        } else if collectionView == topRatedCollectionView {
-            movie = topRatedMovies?.results[indexPath.item]
+        if let movie = currentCollectionView(current: collectionView)?.results[indexPath.item] {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let movieDetailsView = storyboard.instantiateViewController(withIdentifier: "MovieDetailsView") as! MovieDetailsViewController
+            movieDetailsView.movieId = movie.id
+            navigationController?.pushViewController(movieDetailsView, animated: true)
         }
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let movieDetailsView = storyboard.instantiateViewController(withIdentifier: "MovieDetailsView") as! MovieDetailsViewController
-        movieDetailsView.movieId = movie?.id
-        navigationController?.pushViewController(movieDetailsView, animated: true)
     }
 }

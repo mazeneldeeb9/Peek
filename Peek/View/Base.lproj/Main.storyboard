@@ -224,9 +224,11 @@
                     <navigationItem key="navigationItem" id="BcL-Cu-vd8"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
+                        <outlet property="collectionsStack" destination="sas-la-EGY" id="s3a-ft-QIk"/>
                         <outlet property="nowPlayingCollectionView" destination="wSX-LC-Epr" id="mI9-z4-e1S"/>
                         <outlet property="popularCollectionView" destination="NAY-Y0-sxp" id="EVu-51-uuB"/>
                         <outlet property="topRatedCollectionView" destination="xmj-Ck-lsR" id="7Mx-6g-jrC"/>
+                        <outlet property="topView" destination="tIZ-ey-77V" id="rsJ-yV-bfo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -255,10 +257,10 @@
                             </collectionViewFlowLayout>
                             <cells>
                                 <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Movie Cell" id="doU-gc-pvF">
-                                    <rect key="frame" x="0.0" y="20.333333333333332" width="128" height="127.99999999999999"/>
+                                    <rect key="frame" x="0.0" y="20.333333333333332" width="128" height="127.99999999999997"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="lr3-wf-x4g">
-                                        <rect key="frame" x="0.0" y="0.0" width="128" height="127.99999999999999"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="128" height="127.99999999999997"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                     </collectionViewCellContentView>
                                 </collectionViewCell>
@@ -481,10 +483,10 @@
             <color red="0.15294117647058825" green="0.15686274509803921" blue="0.23137254901960785" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="systemGray2Color">
-            <color red="0.68235294120000001" green="0.68235294120000001" blue="0.69803921570000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGreenColor">
-            <color red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
