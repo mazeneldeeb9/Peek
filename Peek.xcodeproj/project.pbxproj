@@ -70,26 +70,15 @@
 		E857E4D22C64C9D60080AC90 /* Peek */ = {
 			isa = PBXGroup;
 			children = (
+				E8DECC702C6C6F8F00071FE6 /* Modules */,
 				E8AFB3C72C6797E600D0840B /* Extensions */,
-				E857E4E92C64CD110080AC90 /* View */,
 				E857E4E82C64CD0C0080AC90 /* Model */,
-				E857E4E72C64CCF70080AC90 /* Controller */,
 				E857E4D32C64C9D60080AC90 /* AppDelegate.swift */,
 				E857E4D52C64C9D60080AC90 /* SceneDelegate.swift */,
 				E857E4DC2C64C9D80080AC90 /* Assets.xcassets */,
 				E857E4E12C64C9D80080AC90 /* Info.plist */,
 			);
 			path = Peek;
-			sourceTree = "<group>";
-		};
-		E857E4E72C64CCF70080AC90 /* Controller */ = {
-			isa = PBXGroup;
-			children = (
-				E857E4D72C64C9D60080AC90 /* MainViewController.swift */,
-				E857E5032C6641A30080AC90 /* MovieCollectionViewCell.swift */,
-				E857E5072C667C6F0080AC90 /* MovieDetailsViewController.swift */,
-			);
-			path = Controller;
 			sourceTree = "<group>";
 		};
 		E857E4E82C64CD0C0080AC90 /* Model */ = {
@@ -118,6 +107,25 @@
 				E8AFB3C82C67980B00D0840B /* UIImageViewExtension.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		E8DECC702C6C6F8F00071FE6 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				E857E4E92C64CD110080AC90 /* View */,
+				E8DECC732C6C6FB900071FE6 /* Controller */,
+			);
+			path = Modules;
+			sourceTree = "<group>";
+		};
+		E8DECC732C6C6FB900071FE6 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				E857E4D72C64C9D60080AC90 /* MainViewController.swift */,
+				E857E5032C6641A30080AC90 /* MovieCollectionViewCell.swift */,
+				E857E5072C667C6F0080AC90 /* MovieDetailsViewController.swift */,
+			);
+			path = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
