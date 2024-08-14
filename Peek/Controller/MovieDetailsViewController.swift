@@ -2,8 +2,8 @@ import UIKit
 
 class MovieDetailsViewController: UIViewController {
     
-    var movieId: Int?
-    private var movie: Movie?
+    var movieId: Int!
+    private var movie: Movie!
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     
     @IBOutlet weak var movieImage: UIImageView!

@@ -85,8 +85,8 @@
 		E857E4E72C64CCF70080AC90 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				E857E5032C6641A30080AC90 /* MovieCollectionViewCell.swift */,
 				E857E4D72C64C9D60080AC90 /* MainViewController.swift */,
+				E857E5032C6641A30080AC90 /* MovieCollectionViewCell.swift */,
 				E857E5072C667C6F0080AC90 /* MovieDetailsViewController.swift */,
 			);
 			path = Controller;

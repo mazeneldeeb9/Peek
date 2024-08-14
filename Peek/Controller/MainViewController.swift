@@ -106,14 +106,7 @@ extension MainViewController {
         topRatedCollectionView.reloadData()
     }
     
-    private func currentCollectionView(current collectionView: UICollectionView) -> MovieResponse? {
-        if collectionView == popularCollectionView {
-            return popularMovies
-        } else if collectionView == nowPlayingCollectionView {
-            return nowPlayingMovies
-        }
-        return topRatedMovies
-    }
+    
     
     private func updateCollectionViewLayouts() {
         let screenSize = UIScreen.main.bounds.size
@@ -189,9 +182,21 @@ extension MainViewController {
     }
 }
 
-// MARK: - UICollectionViewDataSource & UICollectionViewDelegate
+
+
+
 
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+    
+    private func currentCollectionView(current collectionView: UICollectionView) -> MovieResponse? {
+        if collectionView == popularCollectionView {
+            return popularMovies
+        } else if collectionView == nowPlayingCollectionView {
+            return nowPlayingMovies
+        }
+        return topRatedMovies
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return currentCollectionView(current: collectionView)?.results.count ?? 0
     }
@@ -218,6 +223,3 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     
     
 }
-
-
-
