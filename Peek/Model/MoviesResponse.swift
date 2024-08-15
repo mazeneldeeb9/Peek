@@ -12,7 +12,18 @@ struct MovieResponse: Decodable {
     let results: [Movie]
     let totalPages: Int
     let totalResults: Int
+    var title: String?
     
+    func setTitle(with category: MovieCategory) -> String{
+        switch category {
+        case .nowPlaying:
+            return "Now Playing"
+        case .popular:
+            return "Popular"
+        case .topRated:
+            return "Top Rated"
+        }
+    }
     private enum CodingKeys: String, CodingKey {
         case page, results
         case totalPages = "total_pages"
