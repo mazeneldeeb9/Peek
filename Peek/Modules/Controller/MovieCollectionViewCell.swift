@@ -13,6 +13,14 @@ class MovieCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var bottomView: UIView!
 
     @IBOutlet weak var voteAverage: UILabel!
+    
+    
+    
+    static let identifier: String = "MovieCell"
+    static func nib() -> UINib {
+        return UINib(nibName: "MovieCollectionViewCell", bundle: nil)
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         self.layer.cornerRadius = 24
@@ -25,8 +33,6 @@ class MovieCollectionViewCell: UICollectionViewCell {
         voteAverage.text = movie.getVoteAverage()
         if let posterPath = movie.posterPath, let url = URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)") {
             movieImage.load(url: url)
-        } else {
-            movieImage.image = UIImage(named: "prototype")
-        }
+        } 
     }
 }
