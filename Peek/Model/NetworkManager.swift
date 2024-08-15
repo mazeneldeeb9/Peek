@@ -116,7 +116,7 @@ enum NetworkError: Error {
     
     
 }
-enum MovieCategory: String {
+enum MovieCategory: String, CaseIterable {
     case popular = "popular"
     case nowPlaying = "now_playing"
     case topRated = "top_rated"

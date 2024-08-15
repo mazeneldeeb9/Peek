@@ -4,80 +4,38 @@ class MainViewController: UIViewController {
     
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     
-    @IBOutlet weak var collectionsStack: UIStackView!
+    @IBOutlet weak var moviesCategoriesTableView: UITableView!
     @IBOutlet weak var topView: UIView!
-    @IBOutlet weak var nowPlayingCollectionView: UICollectionView!
-    @IBOutlet weak var popularCollectionView: UICollectionView!
-    @IBOutlet weak var topRatedCollectionView: UICollectionView!
-    let scrollView = UIScrollView()
     
     let networkManager: NetworkManager = NetworkManager()
-    var popularMovies: MovieResponse?
-    var topRatedMovies: MovieResponse?
-    var nowPlayingMovies: MovieResponse?
+    var moviesCategories = [MovieResponse]()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupTableView()
         setupLoadingView()
-        setupCollectionViews()
         fetchMovies()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        updateCollectionViewLayouts()
     }
 }
 
-// MARK: - Setup UI
+
+// MARK: Setup Tableview
 
 extension MainViewController {
-    private func setupCollectionViews() {
-        let cellName: String = "MovieCollectionViewCell"
-        let cellIdentifier = "MovieCell"
+    private func setupTableView() {
+        moviesCategoriesTableView.delegate = self
+        moviesCategoriesTableView.dataSource = self
         
-        nowPlayingCollectionView.dataSource = self
-        popularCollectionView.dataSource = self
-        topRatedCollectionView.dataSource = self
-        nowPlayingCollectionView.delegate = self
-        popularCollectionView.delegate = self
-        topRatedCollectionView.delegate = self
-        
-        nowPlayingCollectionView.register(UINib(nibName: cellName, bundle: nil), forCellWithReuseIdentifier: cellIdentifier)
-        popularCollectionView.register(UINib(nibName: cellName, bundle: nil), forCellWithReuseIdentifier: cellIdentifier)
-        topRatedCollectionView.register(UINib(nibName: cellName, bundle: nil), forCellWithReuseIdentifier: cellIdentifier)
+        moviesCategoriesTableView.register(MoviesTableViewCell.nib(), forCellReuseIdentifier: MoviesTableViewCell.identifier)
     }
-    
-    
-   
 }
 
 // MARK: Update UI
 
 extension MainViewController {
     private func updateUI() {
-        nowPlayingCollectionView.reloadData()
-        popularCollectionView.reloadData()
-        topRatedCollectionView.reloadData()
-    }
-    
-    
-    
-    private func updateCollectionViewLayouts() {
-        let screenSize = UIScreen.main.bounds.size
-        
-        if let parentHeight = nowPlayingCollectionView.superview?.bounds.height {
-            let layout = UICollectionViewFlowLayout()
-            layout.scrollDirection = .horizontal
-            layout.itemSize = CGSize(width: (screenSize.width / 2.3) + 10, height: parentHeight - 55)
-            layout.minimumLineSpacing = 10
-            layout.minimumInteritemSpacing = 0
-            layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
-            
-            nowPlayingCollectionView.collectionViewLayout = layout
-            popularCollectionView.collectionViewLayout = layout
-            topRatedCollectionView.collectionViewLayout = layout
-        }
+        moviesCategoriesTableView.reloadData()
     }
 }
 
@@ -90,9 +48,13 @@ extension MainViewController {
         
         Task {
             do {
-                popularMovies = try await networkManager.getMovies(for: .popular)
-                nowPlayingMovies = try await networkManager.getMovies(for: .nowPlaying)
-                topRatedMovies = try await networkManager.getMovies(for: .topRated)
+                
+                for category in MovieCategory.allCases {
+                    var response: MovieResponse = try await networkManager.getMovies(for: category)
+                    response.title = response.setTitle(with: category)
+                    moviesCategories.append(response)
+                }
+                
                 
                 DispatchQueue.main.async {
                     self.updateUI()
@@ -149,59 +111,58 @@ extension MainViewController {
         view.isUserInteractionEnabled = false
         activityIndicator.startAnimating()
         
-        nowPlayingCollectionView.isHidden = true
-        popularCollectionView.isHidden = true
-        topRatedCollectionView.isHidden = true
+        moviesCategoriesTableView.isHidden = true
+        
     }
     
     private func hideLoadingView() {
         view.isUserInteractionEnabled = true
         activityIndicator.stopAnimating()
         
-        nowPlayingCollectionView.isHidden = false
-        popularCollectionView.isHidden = false
-        topRatedCollectionView.isHidden = false
+        moviesCategoriesTableView.isHidden = false
     }
     
-   
+    
 }
 
 
 
-// MARK: UICollectionView Methods
 
-extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate {
-    
-    private func currentCollectionView(current collectionView: UICollectionView) -> MovieResponse? {
-        if collectionView == popularCollectionView {
-            return popularMovies
-        } else if collectionView == nowPlayingCollectionView {
-            return nowPlayingMovies
-        }
-        return topRatedMovies
+
+
+
+// MARK: Tableview Methods
+
+extension MainViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        moviesCategories.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return currentCollectionView(current: collectionView)?.results.count ?? 0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MovieCell", for: indexPath) as! MovieCollectionViewCell
-        
-        if let movie = currentCollectionView(current: collectionView)?.results[indexPath.row] {
-            cell.configure(with: movie)
-        }
-        
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = moviesCategoriesTableView.dequeueReusableCell(withIdentifier: MoviesTableViewCell.identifier, for: indexPath) as! MoviesTableViewCell
+        cell.moviesCategory = moviesCategories[indexPath.row]
+        cell.delegate = self
         return cell
+        
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let movie = currentCollectionView(current: collectionView)?.results[indexPath.item] {
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            if let movieDetailsView = storyboard.instantiateViewController(withIdentifier: "MovieDetailsView") as? MovieDetailsViewController {
-                movieDetailsView.movieId = movie.id
-                navigationController?.pushViewController(movieDetailsView, animated: true)
-            }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 300
+    }
+    
+    
+    
+}
+
+
+// MARK: Navigation Delegate
+
+extension MainViewController: MoviesTableViewCellDelegate {
+    func didSelectMovie(_ movie: Movie) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let movieDetailsView = storyboard.instantiateViewController(withIdentifier: "MovieDetailsView") as? MovieDetailsViewController {
+            movieDetailsView.movieId = movie.id
+            navigationController?.pushViewController(movieDetailsView, animated: true)
         }
     }
     

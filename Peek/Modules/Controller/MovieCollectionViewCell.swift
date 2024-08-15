@@ -13,6 +13,14 @@ class MovieCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var bottomView: UIView!
 
     @IBOutlet weak var voteAverage: UILabel!
+    
+    
+    
+    static let identifier: String = "MovieCell"
+    static func nib() -> UINib {
+        return UINib(nibName: "MovieCollectionViewCell", bundle: nil)
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         self.layer.cornerRadius = 24
