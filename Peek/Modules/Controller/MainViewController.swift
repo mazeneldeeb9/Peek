@@ -18,7 +18,6 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupScrollView()
         setupLoadingView()
         setupCollectionViews()
         fetchMovies()
@@ -30,7 +29,7 @@ class MainViewController: UIViewController {
     }
 }
 
-// MARK: - Logic
+// MARK: - Setup UI
 
 extension MainViewController {
     private func setupCollectionViews() {
@@ -49,57 +48,13 @@ extension MainViewController {
         topRatedCollectionView.register(UINib(nibName: cellName, bundle: nil), forCellWithReuseIdentifier: cellIdentifier)
     }
     
-    private func setupScrollView() {
-        view.addSubview(scrollView)
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: topView.bottomAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
-        
-        scrollView.addSubview(collectionsStack)
-        collectionsStack.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            collectionsStack.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            collectionsStack.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            collectionsStack.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            collectionsStack.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            collectionsStack.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
-        ])
-        
-        let collectionsStackHeightConstraint = collectionsStack.heightAnchor.constraint(equalToConstant: 0)
-        collectionsStackHeightConstraint.priority = .defaultLow
-        collectionsStackHeightConstraint.isActive = true
-        
-        collectionsStack.layoutIfNeeded()
-        collectionsStackHeightConstraint.constant = collectionsStack.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
-    }
-    private func fetchMovies() {
-        showLoadingView()
-        
-        Task {
-            do {
-                popularMovies = try await networkManager.getMovies(for: .popular)
-                nowPlayingMovies = try await networkManager.getMovies(for: .nowPlaying)
-                topRatedMovies = try await networkManager.getMovies(for: .topRated)
-                
-                DispatchQueue.main.async {
-                    self.updateUI()
-                    self.hideLoadingView()
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    self.handleFetchError(error)
-                    self.hideLoadingView()
-                }
-            }
-        }
-    }
     
+   
+}
+
+// MARK: Update UI
+
+extension MainViewController {
     private func updateUI() {
         nowPlayingCollectionView.reloadData()
         popularCollectionView.reloadData()
@@ -123,6 +78,54 @@ extension MainViewController {
             popularCollectionView.collectionViewLayout = layout
             topRatedCollectionView.collectionViewLayout = layout
         }
+    }
+}
+
+
+// MARK: Fetch Data
+
+extension MainViewController {
+    private func fetchMovies() {
+        showLoadingView()
+        
+        Task {
+            do {
+                popularMovies = try await networkManager.getMovies(for: .popular)
+                nowPlayingMovies = try await networkManager.getMovies(for: .nowPlaying)
+                topRatedMovies = try await networkManager.getMovies(for: .topRated)
+                
+                DispatchQueue.main.async {
+                    self.updateUI()
+                    self.hideLoadingView()
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.handleFetchError(error)
+                    self.hideLoadingView()
+                }
+            }
+        }
+    }
+    
+    private func handleFetchError(_ error: Error) {
+        print("Failed to fetch movies: \(error.localizedDescription)")
+        
+        let alertController = UIAlertController(
+            title: "Error",
+            message: "Failed to load movies. Please try again later.",
+            preferredStyle: .alert
+        )
+        
+        let retryAction = UIAlertAction(title: "Retry", style: .default) { _ in
+            self.fetchMovies()  // Retry fetching movies
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        
+        alertController.addAction(retryAction)
+        alertController.addAction(cancelAction)
+        
+        present(alertController, animated: true)
     }
 }
 
@@ -160,31 +163,12 @@ extension MainViewController {
         topRatedCollectionView.isHidden = false
     }
     
-    private func handleFetchError(_ error: Error) {
-        print("Failed to fetch movies: \(error.localizedDescription)")
-        
-        let alertController = UIAlertController(
-            title: "Error",
-            message: "Failed to load movies. Please try again later.",
-            preferredStyle: .alert
-        )
-        
-        let retryAction = UIAlertAction(title: "Retry", style: .default) { _ in
-            self.fetchMovies()  // Retry fetching movies
-        }
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
-        
-        alertController.addAction(retryAction)
-        alertController.addAction(cancelAction)
-        
-        present(alertController, animated: true)
-    }
+   
 }
 
 
 
-
+// MARK: UICollectionView Methods
 
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     
